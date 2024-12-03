@@ -153,6 +153,9 @@ async function createThreadAndAskQuestionAndDelete(page, context, events, test) 
     try {
       await chatStreamingRequest.json();
     } catch (error) {}// we don't care about json error we are just waiting for stream to finish
+  });
+
+  await step('delete_thread', async () => {
     await page.locator('[data-cy=chat-header] svg:nth-child(2)').click();
 
     const chatDeletePromise = page.waitForResponse('**/chat');
