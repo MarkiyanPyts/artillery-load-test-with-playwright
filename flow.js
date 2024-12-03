@@ -131,20 +131,9 @@ async function loginUserAndSaveStorage(page, context) {
   //click sign in with password
   await page.getByLabel('Password').fill(context.vars.password);
   await page.getByRole('button', { name: 'Continue' }).click();
-  // Wait until the page receives the cookies.
-  //
-  // Sometimes login flow sets cookies in the process of several redirects.
-  // Wait for the final URL to ensure that the cookies are actually set.
 
-  // need url to include chat-staging.allai.build
   await page.waitForURL(context.vars.target);
 
-  //4. ensure we are redirected to profile page and logged in
-//   await page.waitForURL('**/profile-sg');
-//   await expect(page.getByText('Your GitHub profile')).toBeVisible();
-
-  //5. save iron session cookie to storage.json
-  // NOTE: we use the $dirname utility so Playwright can resolve the full path
   await page
     .context()
     .storageState({ path: `${context.vars.$dirname}/storage.json` });
@@ -152,7 +141,6 @@ async function loginUserAndSaveStorage(page, context) {
 
 async function createThreadAndAskQuestionAndDelete(page, context, events, test) {
   const { step } = test;
-  const profileHeaderText = 'Protected page via client component →';
 
   await step('go_to_home_and_create_thread', async () => {
     await page.goto(context.vars.target);
