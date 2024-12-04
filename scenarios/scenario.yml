@@ -1,8 +1,9 @@
 config:
-  target: http://localhost:3000/
+  target: https://chat-test.allai.build/
   phases:
-    - arrivalRate: 1
-      duration: 2
+    - name: Grow
+      arrivalRate: 1
+      duration: 10
   engines:
     playwright:
       launchOptions:
