@@ -1,19 +1,20 @@
 config:
-  target: https://chat-test.allai.build/
+  target: https://chat.allai.build
   phases:
-    - name: ramp up
-      duration: 2m
+    - name: start
+      duration: 1m
       arrivalRate: 1
-      rampTo: 1
-    # - name: load
-    #   duration: 3m
-    #   arrivalRate: 2
-    #   rampTo: 3
-    # - name: sustain
-    #   arrivalRate: 3
-    #   duration: 5m
+    - name: load
+      duration: 5m
+      arrivalRate: 1
+      rampTo: 3
+    - name: sustain
+      arrivalRate: 3
+      duration: 5m
   engines:
     playwright:
+      defaultTimeout: 120
+      navigationTimeout: 120
       launchOptions:
         headless: true
       contextOptions:
@@ -32,6 +33,6 @@ before:
   flowFunction: loginUserAndSaveStorage
 
 scenarios:
-  - name: go_to_profile_page_and_logout
+  - name: create_thread_ask_and_delete
     engine: playwright
     flowFunction: createThreadAndAskQuestionAndDelete

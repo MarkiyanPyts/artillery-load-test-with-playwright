@@ -12,7 +12,8 @@ npx artillery run scenario.yml
 ```
 npx artillery run scenario.yml
 npx artillery run-fargate scenario_prod.yml --count 1 --launch-config '{"cpu": 8192, "memory": 32768}'
-npx artillery run-fargate scenario_prod.yml --count 1
+npx artillery run-fargate scenario_prod.yml --count 1 --launch-config '{"cpu": 8192, "memory": 61440}'
+npx artillery run-fargate scenario_prod.yml --count 2 --launch-config '{"cpu": 8192, "memory": 61440}'
 ```
 
 ## Don't keep test scenarios in same level as package.json or dont install artillery locally

@@ -104,6 +104,38 @@ const sfccQuestions = [
   "How does SFCC support real-time inventory updates?"
 ];
 
+const meetingText = 
+`
+Meeting Title: Project Kick-off Meeting
+Date: December 5, 2024
+Time: 10:00 AM - 11:00 AM
+Participants:
+
+Alice Johnson (Project Manager)
+Bob Smith (Lead Developer)
+Carol White (UX Designer)
+David Brown (QA Specialist)
+Alice Johnson:
+Good morning, everyone. Thank you for joining the project kick-off meeting. Our main goal today is to outline the project objectives and discuss the timeline and deliverables. Let's start with a brief overview of the project.
+
+Bob Smith:
+Thanks, Alice. The project aims to develop a new feature for our application that enhances user engagement. We plan to use the latest technologies to ensure scalability and performance.
+
+Carol White:
+From a design perspective, I'll focus on creating an intuitive user interface that aligns with our brand guidelines. I'll share some initial design concepts by next week.
+
+David Brown:
+I'll be setting up the testing framework to ensure we maintain high-quality standards throughout the development process. I'll coordinate with Bob to integrate testing early in the development cycle.
+
+Alice Johnson:
+Great, thank you all. Let's move on to the timeline. We aim to complete the project in three months, with key milestones every two weeks. I'll send out a detailed schedule after the meeting.
+
+Bob Smith:
+Sounds good. I'll ensure the development team is aligned with the timeline and deliverables.
+
+Alice Johnson:
+Thank you, everyone. If there are no further questions, we'll wrap up today's meeting. Please feel free to reach out if you have any concerns or need further clarification.
+`
 // a function that returns a random string from above array
 function getRandomQuestion() {
   const index = Math.floor(Math.random() * sfccQuestions.length);
@@ -123,6 +155,10 @@ async function loginUserAndSaveStorage(page, context) {
 
   //1. navigate to page and assert that we are not logged in
   await page.goto(context.vars.target);//wait for auth0 login
+  // log urls loaded
+  // const html = await page.content()
+  // console.log(html)
+
   await page.waitForURL('**/u/login/**');
 
   await page.getByLabel('Email address').fill(context.vars.username);
@@ -156,6 +192,31 @@ async function createThreadAndAskQuestionAndDelete(page, context, events, test) 
   });
 
   await step('delete_thread', async () => {
+    await page.locator('[data-cy=chat-header] svg:nth-child(2)').click();
+
+    const chatDeletePromise = page.waitForResponse('**/chat');
+    // wait for chatDeletePromise to finish streaming response
+    const request = await chatDeletePromise;
+  });
+
+  await step('create_thread_from_prompt', async () => {
+    await page.goto(`${context.vars.target}/prompts-library`);
+    await page.locator('input[placeholder="Search prompts..."]').fill('meeting');
+    await page.locator('[data-cy="chat-prompt-meeting-analyst"]').click();
+
+    await page.locator('[data-cy=send-message-textarea]').fill(meetingText);
+    await page.locator('[data-cy="send-message-button"]').click();
+
+    const chatStreamingPromise = page.waitForResponse('**/$chat');
+    // wait for chatStreamingPromise to finish streaming response
+    const chatStreamingRequest = await chatStreamingPromise;
+    try {
+      await chatStreamingRequest.json();
+    } catch (error) {}// we don't care about json error we are just waiting for stream to finish
+  });
+
+  await step('delete_thread', async () => {
+    // set timeout to 60s
     await page.locator('[data-cy=chat-header] svg:nth-child(2)').click();
 
     const chatDeletePromise = page.waitForResponse('**/chat');

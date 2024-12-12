@@ -1,13 +1,15 @@
 config:
-  target: https://chat-test.allai.build/
+  target: https://chat.allai.build
   phases:
     - name: Grow
       arrivalRate: 1
-      duration: 10
+      duration: 1
   engines:
     playwright:
+      defaultTimeout: 120
+      navigationTimeout: 120
       launchOptions:
-        headless: false
+        headless: true
       contextOptions:
         # NOTE: we use the $dirname utility so Playwright can resolve the full path
         storageState: "{{ $dirname }}/storage.json"
@@ -24,6 +26,6 @@ before:
   flowFunction: loginUserAndSaveStorage
 
 scenarios:
-  - name: go_to_profile_page_and_logout
+  - name: create_thread_ask_and_delete
     engine: playwright
     flowFunction: createThreadAndAskQuestionAndDelete
